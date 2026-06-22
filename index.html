@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auracle — AI Voice Receptionist for Salons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-card: #111113;
+    --bg-card-hover: #18181b;
+    --border: rgba(255,255,255,0.08);
+    --border-blue: rgba(59,130,246,0.4);
+    --blue: #3b82f6;
+    --blue-bright: #60a5fa;
+    --blue-glow: rgba(59,130,246,0.15);
+    --blue-dim: rgba(59,130,246,0.08);
+    --text: #fafafa;
+    --text-muted: #a1a1aa;
+    --text-dim: #52525b;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+    background: rgba(9,9,11,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .nav-logo span {
+    color: var(--blue-bright);
+  }
+
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blue);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .nav-cta:hover { background: #2563eb; }
+  .nav-cta:active { transform: scale(0.98); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 1.5rem 80px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(ellipse at center, rgba(59,130,246,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blue-dim);
+    border: 0.5px solid var(--border-blue);
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--blue-bright);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.3px;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--blue-bright);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    color: var(--text);
+    max-width: 820px;
+    margin-bottom: 1.25rem;
+  }
+
+  h1 .accent {
+    color: var(--blue-bright);
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3.5rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 11px 24px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-primary:hover { background: #2563eb; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 11px 24px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: 0.5px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,0.2);
+    color: var(--text);
+  }
+
+  /* Video placeholder */
+  .video-wrap {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .video-outer {
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border);
+    background: var(--bg-card);
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(59,130,246,0.1), 0 32px 80px rgba(0,0,0,0.6);
+  }
+
+  .video-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .video-placeholder {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: #0d0d10;
+  }
+
+  .video-placeholder iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-placeholder-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--text-dim);
+  }
+
+  .play-btn {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--blue-dim);
+    border: 0.5px solid var(--border-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blue-bright);
+    font-size: 22px;
+  }
+
+  .video-label {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    height: 0.5px;
+    background: var(--border);
+    margin: 0;
+  }
+
+  /* ── SECTION SHARED ── */
+  section {
+    padding: 96px 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 20px; height: 0.5px;
+    background: var(--text-dim);
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: -1px;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .section-body {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 560px;
+    line-height: 1.75;
+  }
+
+  /* ── PROBLEM ── */
+  #problem {
+    border-top: 0.5px solid var(--border);
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 3rem;
+  }
+
+  .problem-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(239,68,68,0.6), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .problem-card:hover {
+    border-color: rgba(239,68,68,0.25);
+    background: var(--bg-card-hover);
+  }
+
+  .problem-card:hover::before { opacity: 1; }
+
+  .problem-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-sm);
+    background: rgba(239,68,68,0.1);
+    border: 0.5px solid rgba(239,68,68,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .problem-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .problem-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .problem-stat {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #f87171;
+    background: rgba(239,68,68,0.08);
+    border: 0.5px solid rgba(239,68,68,0.2);
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+
+  /* ── SOLUTION ── */
+  #solution {
+    border-top: 0.5px solid var(--border);
+  }
+
+  .solution-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 700px) {
+    .solution-top { grid-template-columns: 1fr; }
+  }
+
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 0.5rem;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .feature-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--blue-dim);
+    border: 0.5px solid var(--border-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--blue-bright);
+  }
+
+  .feature-item p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .feature-item strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Calendly placeholder */
+  .calendly-wrap {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .calendly-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .calendly-bar-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .calendly-bar-badge {
+    font-size: 11px;
+    color: var(--blue-bright);
+    background: var(--blue-dim);
+    border: 0.5px solid var(--border-blue);
+    padding: 2px 9px;
+    border-radius: 99px;
+  }
+
+  .calendly-placeholder {
+    width: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-dim);
+    padding: 2rem;
+  }
+
+  .calendly-placeholder .cal-icon {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-sm);
+    background: var(--blue-dim);
+    border: 0.5px solid var(--border-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .calendly-placeholder p {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  /* When Calendly iframe is added, it fills this */
+  .calendly-inline-widget {
+    min-width: 320px;
+    width: 100%;
+    min-height: 500px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+
+  .footer-logo span { color: var(--blue-bright); }
+
+  footer p {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    nav { padding: 0 1rem; }
+    h1 { letter-spacing: -0.5px; }
+    .hero-actions { flex-direction: column; align-items: center; }
+  }
+
+  /* ── REDUCED MOTION ── */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-badge::before { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Aur<span>acle</span></div>
+  <a href="#solution" class="nav-cta">Book a demo →</a>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<div id="hero">
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">AI Voice Receptionist for Salons</div>
+
+  <h1>
+    Your salon answers every call.<br>
+    <span class="accent">Even when you can't.</span>
+  </h1>
+
+  <p class="hero-sub">
+    Auracle is an AI voice receptionist that books appointments, answers FAQs, and handles calls 24/7 — at a fraction of what a front desk hire costs.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#solution" class="btn-primary">Book a free demo →</a>
+    <a href="#problem" class="btn-ghost">See how it works</a>
+  </div>
+
+  <!-- YouTube placeholder — replace src with your embed URL -->
+  <div class="video-wrap">
+    <div class="video-outer">
+      <div class="video-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="video-placeholder">
+        <iframe src="https://www.youtube.com/embed/lJhqnAyTEig?rel=0&modestbranding=1&autohide=1" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PROBLEM
+════════════════════════════════════════ -->
+<section id="problem">
+  <div class="section-label">The problem</div>
+  <h2>Missed calls are<br>missed revenue.</h2>
+  <p class="section-body">
+    Every time your phone rings and nobody answers, that's a booking walking straight to your competitor. Most salons lose thousands a month and don't even realize it.
+  </p>
+
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="problem-icon">📵</div>
+      <h3>Calls go unanswered</h3>
+      <p>Stylists are with clients. Nobody's free to pick up. The caller hangs up and books somewhere else.</p>
+      <span class="problem-stat">62% of calls go to voicemail</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">🌙</div>
+      <h3>After-hours = lost bookings</h3>
+      <p>Most people search and book outside business hours. Without coverage, those leads disappear overnight.</p>
+      <span class="problem-stat">40% of bookings happen after 6pm</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">💸</div>
+      <h3>Receptionists are expensive</h3>
+      <p>Hiring, training, turnover. A full-time front desk costs $30–50K a year and still can't work 24/7.</p>
+      <span class="problem-stat">$35,000+ avg annual cost</span>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-icon">🔁</div>
+      <h3>High staff turnover</h3>
+      <p>Front desk roles see some of the highest turnover in the industry — you're constantly rehiring and retraining.</p>
+      <span class="problem-stat">Avg 6 months before they leave</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SOLUTION
+════════════════════════════════════════ -->
+<section id="solution">
+  <div class="section-label">The solution</div>
+  <h2>An AI receptionist that<br><span style="color:var(--blue-bright)">never misses a call.</span></h2>
+
+  <div class="solution-top">
+    <div>
+      <p class="section-body" style="margin-bottom: 2rem;">
+        Auracle answers every call in seconds, sounds completely natural, and books directly into your calendar — day or night, with zero training and zero turnover.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <p><strong>Answers calls 24/7</strong> — no hold music, no voicemail, no missed leads.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <p><strong>Books appointments</strong> directly into your CRM or booking system in real time.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <p><strong>Handles FAQs</strong> — hours, pricing, services, directions. All answered instantly.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <p><strong>Sounds human</strong> — not a robotic IVR. Natural conversation your clients will love.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feature-check">✓</div>
+          <p><strong>90% cheaper</strong> than a full-time receptionist. Setup in days, not months.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendly booking widget -->
+    <div class="calendly-wrap">
+      <div class="calendly-bar">
+        <span class="calendly-bar-title">Book your free demo</span>
+        <span class="calendly-bar-badge">Free · 15 min</span>
+      </div>
+
+      <!-- Calendly inline widget -->
+      <div class="calendly-inline-widget"
+           data-url="https://calendly.com/asadmrao69/new-meeting?hide_event_type_details=1&hide_gdpr_banner=1&background_color=111113&text_color=fafafa&primary_color=3b82f6"
+           style="min-width:320px;height:500px;">
+      </div>
+      <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Aur<span>acle</span></div>
+  <p>© 2026 Auracle. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
